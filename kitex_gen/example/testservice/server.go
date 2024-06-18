@@ -2,8 +2,8 @@
 package testservice
 
 import (
-	example "example/kitex_gen/example"
 	server "github.com/cloudwego/kitex/server"
+	example "github.com/zhu-mi-shan/optionloader_example/kitex_gen/example"
 )
 
 // NewServer creates a server.Server with the given handler and options.

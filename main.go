@@ -2,11 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	example "example/kitex_gen/example/testservice"
 	"fmt"
 	etcdServer "github.com/Printemps417/optionloader/etcd/server"
 	"github.com/Printemps417/optionloader/utils"
 	kitexserver "github.com/cloudwego/kitex/server"
+	example "github.com/zhu-mi-shan/optionloader_example/kitex_gen/example/testservice"
 	"log"
 )
 

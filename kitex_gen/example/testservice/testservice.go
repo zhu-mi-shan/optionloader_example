@@ -5,9 +5,9 @@ package testservice
 import (
 	"context"
 	"errors"
-	example "example/kitex_gen/example"
 	client "github.com/cloudwego/kitex/client"
 	kitex "github.com/cloudwego/kitex/pkg/serviceinfo"
+	example "github.com/zhu-mi-shan/optionloader_example/kitex_gen/example"
 )
 
 var errInvalidMessageType = errors.New("invalid message type for service method handler")

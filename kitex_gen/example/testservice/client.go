@@ -4,9 +4,9 @@ package testservice
 
 import (
 	"context"
-	example "example/kitex_gen/example"
 	client "github.com/cloudwego/kitex/client"
 	callopt "github.com/cloudwego/kitex/client/callopt"
+	example "github.com/zhu-mi-shan/optionloader_example/kitex_gen/example"
 )
 
 // Client is designed to provide IDL-compatible methods with call-option parameter for kitex framework.

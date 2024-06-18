@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	example "example/kitex_gen/example"
+	example "github.com/zhu-mi-shan/optionloader_example/kitex_gen/example"
 )
 
 // TestServiceImpl implements the last service interface defined in the IDL.

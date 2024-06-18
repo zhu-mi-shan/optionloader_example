@@ -3,12 +3,12 @@ package main
 import (
 	"context"
 	"encoding/json"
-	examplegen "example/kitex_gen/example"
-	example "example/kitex_gen/example/testservice"
 	"fmt"
 	etcdClient "github.com/Printemps417/optionloader/etcd/client"
 	"github.com/Printemps417/optionloader/utils"
 	kitexclient "github.com/cloudwego/kitex/client"
+	examplegen "github.com/zhu-mi-shan/optionloader_example/kitex_gen/example"
+	example "github.com/zhu-mi-shan/optionloader_example/kitex_gen/example/testservice"
 	"log"
 )
 

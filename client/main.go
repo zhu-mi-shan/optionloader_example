@@ -1,24 +1,27 @@
 package main
 
 import (
+	"context"
 	"encoding/json"
+	examplegen "example/kitex_gen/example"
 	example "example/kitex_gen/example/testservice"
 	"fmt"
-	etcdServer "github.com/Printemps417/optionloader/etcd/server"
+	etcdClient "github.com/Printemps417/optionloader/etcd/client"
 	"github.com/Printemps417/optionloader/utils"
-	kitexserver "github.com/cloudwego/kitex/server"
+	kitexclient "github.com/cloudwego/kitex/client"
 	"log"
 )
 
 const (
 	serverServiceName = "echo_server_service"
+	clientServiceName = "echo_client_service"
 )
 
 // 用户可以自定义读取数据的类型，要求通过Decode返回一个字节流
 type myConfigParser struct {
 }
 
-func (p *myConfigParser) Decode(data []byte, config *etcdServer.EtcdConfig) error {
+func (p *myConfigParser) Decode(data []byte, config *etcdClient.EtcdConfig) error {
 	return json.Unmarshal(data, config)
 }
 
@@ -43,9 +46,12 @@ func (r *myConfig) String() string {
 }
 
 // 用户可自定义Translator，用于将myConfig解析成Options
-func myTranslator(config *etcdServer.EtcdConfig) ([]kitexserver.Option, error) {
+func myTranslator(config *etcdClient.EtcdConfig) ([]kitexclient.Option, error) {
 	c := config.MyConfig
-	var opts []kitexserver.Option
+	if c == nil {
+		return nil, nil
+	}
+	opts := []kitexclient.Option{}
 	//具体处理逻辑
 	_ = opts
 	fmt.Println("myConfigTranslator run! myConfig:" + c.String())
@@ -53,19 +59,20 @@ func myTranslator(config *etcdServer.EtcdConfig) ([]kitexserver.Option, error) {
 }
 
 func main() {
-	readerOptions := etcdServer.ReaderOptions{
+
+	readerOptions := etcdClient.ReaderOptions{
 		ConfigParser: &myConfigParser{},
 		MyConfig:     &myConfig{},
 	}
 	utils.Printpath()
-	reader, err := etcdServer.NewReader(readerOptions)
+	reader, err := etcdClient.NewReader(readerOptions)
 	//reader, err := etcdClient.NewReader(etcdClient.ReaderOptions{})//使用默认值时的
 	if err != nil {
 		log.Fatal(err)
 		return
 	}
-	myTranslators := []etcdServer.Translator{myTranslator}
-	loader, err := etcdServer.NewLoader(serverServiceName, reader, myTranslators...)
+	myTranslators := []etcdClient.Translator{myTranslator}
+	loader, err := etcdClient.NewLoader(clientServiceName, serverServiceName, reader, myTranslators...)
 	if err != nil {
 		log.Fatal(err)
 		return
@@ -78,11 +85,18 @@ func main() {
 	fmt.Println("Options: ", loader.GetSuite().Options())
 	config, _ := reader.GetConfig()
 	fmt.Print("Config:", config.String())
-	svr := example.NewServer(new(TestServiceImpl), kitexserver.WithSuite(loader.GetSuite()))
 
-	err = svr.Run()
-
+	c, err := example.NewClient("echo_server_service", kitexclient.WithSuite(loader.GetSuite()))
 	if err != nil {
-		log.Println(err.Error())
+		log.Fatal(err)
 	}
+	req := examplegen.Req{
+		Id: 123,
+	}
+	resp, err := c.Test(context.Background(), &req)
+	if err != nil {
+		log.Fatal(err)
+		return
+	}
+	fmt.Println(resp)
 }
